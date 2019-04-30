@@ -1,10 +1,11 @@
-package br.com.ericbraga.enment;
+package br.com.ericbraga.enment.firebase;
 
 import android.Manifest;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.test.rule.GrantPermissionRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-import br.com.ericbraga.enment.environmnet.transfer.FirebaseTransferFiles;
+import br.com.ericbraga.enment.environmnet.firebase.FirebaseTransferFiles;
 import br.com.ericbraga.enment.environmnet.transfer.UploadContract;
 
 @RunWith(AndroidJUnit4.class)
@@ -58,6 +59,7 @@ public class FirebaseTestUploadTestFile {
             @Override
             public void onSuccess(Uri result) {
                 semaphore.release();
+
                 Assert.assertEquals(
                         String.format("%s/%s", mOwner, mFileName),
                         result.getLastPathSegment()

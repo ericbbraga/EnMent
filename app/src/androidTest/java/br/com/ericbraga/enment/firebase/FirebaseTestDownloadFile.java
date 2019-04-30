@@ -1,4 +1,4 @@
-package br.com.ericbraga.enment;
+package br.com.ericbraga.enment.firebase;
 
 import android.Manifest;
 import android.content.Context;
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.concurrent.Semaphore;
 
 import br.com.ericbraga.enment.environmnet.transfer.DownloadContract;
-import br.com.ericbraga.enment.environmnet.transfer.FirebaseTransferFiles;
+import br.com.ericbraga.enment.environmnet.firebase.FirebaseTransferFiles;
 
 @RunWith(AndroidJUnit4.class)
 public class FirebaseTestDownloadFile {

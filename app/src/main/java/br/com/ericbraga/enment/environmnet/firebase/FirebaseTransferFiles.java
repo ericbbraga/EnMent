@@ -1,4 +1,4 @@
-package br.com.ericbraga.enment.environmnet.transfer;
+package br.com.ericbraga.enment.environmnet.firebase;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -14,6 +14,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+
+import br.com.ericbraga.enment.environmnet.transfer.DownloadContract;
+import br.com.ericbraga.enment.environmnet.transfer.UploadContract;
 
 public class FirebaseTransferFiles implements UploadContract, DownloadContract {
 
@@ -36,6 +39,7 @@ public class FirebaseTransferFiles implements UploadContract, DownloadContract {
             Uri uriToUpload = Uri.fromFile(file);
 
             UploadTask task = storageFromFile.putFile(uriToUpload);
+
             task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) {

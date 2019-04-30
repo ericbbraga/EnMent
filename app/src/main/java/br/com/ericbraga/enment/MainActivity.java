@@ -12,7 +12,7 @@ import android.util.Log;
 
 import java.io.File;
 
-import br.com.ericbraga.enment.environmnet.transfer.FirebaseTransferFiles;
+import br.com.ericbraga.enment.environmnet.firebase.FirebaseTransferFiles;
 import br.com.ericbraga.enment.environmnet.transfer.UploadContract;
 
 public class MainActivity extends AppCompatActivity {
