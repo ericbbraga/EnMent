@@ -11,6 +11,11 @@ import java.util.concurrent.Semaphore;
 import br.com.ericbraga.enment.environmnet.firebase.FirebaseMoment;
 import br.com.ericbraga.enment.environmnet.firebase.model.Moment;
 import br.com.ericbraga.enment.environmnet.transfer.DataBaseContract;
+import io.reactivex.Observer;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 
 import static org.junit.Assert.*;
 
@@ -23,24 +28,29 @@ public class FirebaseInsertDataTest {
         Moment moment = new Moment("12345", "test", 100, 100, 45);
         final Semaphore semaphore = new Semaphore(0);
 
-        database.insert(moment, new DataBaseContract.DatabaseCallback<String>() {
+        Single<String> observable = database.insert(moment);
+        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
             @Override
-            public void onSuccess(String returnedValue) {
+            public void onSuccess(String s) {
                 semaphore.release();
-                Assert.assertTrue(!returnedValue.isEmpty());
+                Assert.assertTrue(!s.isEmpty());
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(Throwable e) {
                 semaphore.release();
-                Assert.fail(message);
+                Assert.fail(e.getMessage());
             }
+
         });
 
         try {
             semaphore.acquire();
+
         } catch (InterruptedException e) {
             Assert.fail("Semaphore Failed - Test Failed");
+        } finally {
+            disposable.dispose();
         }
     }
 
@@ -50,49 +60,57 @@ public class FirebaseInsertDataTest {
         Moment moment = new Moment();
         final Semaphore semaphore = new Semaphore(0);
 
-        database.insert(moment, new DataBaseContract.DatabaseCallback<String>() {
+        Single<String> observable = database.insert(moment);
+        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
             @Override
-            public void onSuccess(String returnedValue) {
+            public void onSuccess(String s) {
                 semaphore.release();
                 Assert.fail("Empty Object should not be inserted");
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(Throwable e) {
                 semaphore.release();
             }
+
         });
 
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
             Assert.fail("Semaphore Failed - Test Failed");
+        } finally {
+            disposable.dispose();
         }
     }
 
     @Test
     public void nullObjectShouldThrowException() {
         FirebaseMoment database = new FirebaseMoment();
-        Moment moment = null;
         final Semaphore semaphore = new Semaphore(0);
 
-        database.insert(moment, new DataBaseContract.DatabaseCallback<String>() {
+        Single<String> observable = database.insert(null);
+
+        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
             @Override
-            public void onSuccess(String returnedValue) {
+            public void onSuccess(String s) {
                 semaphore.release();
-                Assert.fail("Empty Object should not be inserted");
+                Assert.fail("Null Object should not be inserted");
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(Throwable e) {
                 semaphore.release();
             }
+
         });
 
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
             Assert.fail("Semaphore Failed - Test Failed");
+        } finally {
+            disposable.dispose();
         }
     }
 }

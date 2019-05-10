@@ -1,24 +1,20 @@
 package br.com.ericbraga.enment.environmnet.firebase;
 
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FireStoreRxDocumentInsert;
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxAdapter;
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxDocumentAdapter;
 import br.com.ericbraga.enment.environmnet.firebase.model.Moment;
 import br.com.ericbraga.enment.environmnet.transfer.DataBaseContract;
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
 
 public class FirebaseMoment implements DataBaseContract<Moment> {
-    public static final String MOMENT_TABLE = "moments";
+    private static final String MOMENT_TABLE = "moments";
 
     private FirebaseFirestore mDatabase;
 
@@ -27,63 +23,37 @@ public class FirebaseMoment implements DataBaseContract<Moment> {
     }
 
     @Override
-    public void insert(Moment moment, final DatabaseCallback<String> callback) {
-        if (callback != null) {
+    public Single<String> insert(final Moment moment) {
 
-            if (moment == null || !moment.isValid()) {
-                callback.onError("Invalid Object to Insert");
+        if (moment == null || !moment.isValid()) {
+            return Single.error(new IllegalArgumentException("Moment is invalid"));
+        }
 
-            } else {
-                mDatabase.collection(MOMENT_TABLE).add(moment).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        callback.onSuccess(documentReference.getId());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        callback.onError(e.getMessage());
-                    }
-                });
+        return Single.create(new SingleOnSubscribe<String>() {
+            @Override
+            public void subscribe(SingleEmitter<String> emitter) {
+                FirestoreRxAdapter adapter = new FireStoreRxDocumentInsert(emitter);
+                mDatabase.collection(MOMENT_TABLE).add(moment).addOnSuccessListener(adapter);
             }
-        }
-
+        });
     }
 
     @Override
-    public void list(final DatabaseCallback<List<Moment>> callback) {
-        if (callback != null) {
-            mDatabase.collection(MOMENT_TABLE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    public Single<List<Moment>> list() {
 
-                    List<Moment> moments = new ArrayList<>();
+        return Single.create(new SingleOnSubscribe<List<Moment>>() {
+            @Override
+            public void subscribe(SingleEmitter<List<Moment>> emitter) {
+                FirestoreRxDocumentAdapter<Moment> adapter =
+                        new FirestoreRxDocumentAdapter<>(emitter, Moment.class);
 
-                    if (task.isSuccessful()) {
-                        QuerySnapshot result = task.getResult();
-
-                        if (result != null) {
-                            for (QueryDocumentSnapshot document : result) {
-                                moments.add( document.toObject(Moment.class) );
-
-                            }
-                        }
-
-                    }
-
-                    callback.onSuccess(moments);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    callback.onError(e.getMessage());
-                }
-            });
-        }
+                mDatabase.collection(MOMENT_TABLE).get().addOnCompleteListener(adapter);
+            }
+        });
     }
 
     @Override
-    public void list(ListFilter filters, DatabaseCallback<List<Moment>> callback) {
-        list(callback);
+    public Single<List<Moment>> list(ListFilter filters) {
+        return list();
     }
 }
