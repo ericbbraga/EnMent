@@ -15,8 +15,11 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.concurrent.Semaphore;
 
-import br.com.ericbraga.enment.environmnet.transfer.DownloadContract;
+import br.com.ericbraga.enment.interactor.contracts.DownloadContract;
 import br.com.ericbraga.enment.environmnet.firebase.FirebaseTransferFiles;
+import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
 
 @RunWith(AndroidJUnit4.class)
 public class FirebaseTestDownloadFile {
@@ -25,7 +28,8 @@ public class FirebaseTestDownloadFile {
 
     @Rule
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
     );
 
     @Test
@@ -37,18 +41,28 @@ public class FirebaseTestDownloadFile {
 
         final Semaphore semaphore = new Semaphore(0);
 
-        downloadAction.download(tempDirectory, "test", "test.txt",
-                new DownloadContract.DownloadCallback() {
+        final String ownerDir = "test";
+        final String fileName = "test.txt";
+        Single<Boolean> observable = downloadAction.download(tempDirectory, ownerDir, fileName);
+        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<Boolean>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(Boolean aBoolean) {
                 semaphore.release();
-                Log.i("Download", "onSuccess: " + tempDirectory.getAbsolutePath());
+                Assert.assertTrue(aBoolean);
+
+                File userDir = new File(tempDirectory, ownerDir);
+                Assert.assertTrue(userDir.exists());
+                Assert.assertTrue(userDir.isDirectory());
+
+                File file = new File(userDir, fileName);
+                Assert.assertTrue(file.exists());
+                Assert.assertTrue(file.isFile());
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(Throwable e) {
                 semaphore.release();
-                Assert.fail(message);
+                Assert.fail(e.getMessage());
             }
         });
 
@@ -56,8 +70,8 @@ public class FirebaseTestDownloadFile {
             semaphore.acquire();
         } catch (InterruptedException e) {
             Assert.fail("Semaphore Exception - Test Fail");
+        } finally {
+            disposable.dispose();
         }
-
     }
-
 }

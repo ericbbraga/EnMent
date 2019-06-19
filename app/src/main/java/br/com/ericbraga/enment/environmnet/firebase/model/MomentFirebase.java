@@ -2,7 +2,7 @@ package br.com.ericbraga.enment.environmnet.firebase.model;
 
 import android.text.TextUtils;
 
-public class Moment implements ValidFirebaseValue {
+public class MomentFirebase implements ValidFirebaseValue {
 
     private String mUser;
     private long mLatitude;
@@ -10,10 +10,10 @@ public class Moment implements ValidFirebaseValue {
     private long mAngle;
     private String mPhotoId;
 
-    public Moment() {
+    public MomentFirebase() {
     }
 
-    public Moment(String photoId, String user, long latitude, long longitude, long angle) {
+    public MomentFirebase(String photoId, String user, long latitude, long longitude, long angle) {
         mPhotoId = photoId;
         mUser = user;
         mLatitude = latitude;

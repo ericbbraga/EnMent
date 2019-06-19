@@ -25,6 +25,8 @@ public abstract class FirestoreRxAdapter<T, M> implements OnCompleteListener<T>,
 
             if (result != null) {
                 success(mEmitter, result);
+            } else {
+                error("Invalid Result from Firebase");
             }
 
         } else {
@@ -37,7 +39,7 @@ public abstract class FirestoreRxAdapter<T, M> implements OnCompleteListener<T>,
         if (result != null) {
             success(mEmitter, result);
         } else {
-            error("Unsuccessful onSuccess - null result");
+            error("Invalid Result from Firebase");
         }
     }
 

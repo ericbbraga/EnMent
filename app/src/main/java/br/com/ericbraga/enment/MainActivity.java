@@ -120,23 +120,5 @@ public class MainActivity extends AppCompatActivity {
         for (Observer<String> observer : mObservers) {
             mUploadFile.subscribe(observer);
         }
-
-
-
-
-        /*UploadContract contract = new FirebaseTransferFiles(sFirebaseBucket);
-        File file = new File(Environment.getExternalStorageDirectory(), "alex_one_button.jpeg");
-
-        contract.upload(file, "owner", new UploadContract.UploadCallback() {
-            @Override
-            public void onSuccess(Uri result) {
-                Log.i("MainActivity", "onSuccess: Upload Success:" + result.toString());
-            }
-
-            @Override
-            public void error(String message) {
-                Log.i("MainActivity", "On Error Occurred:" + message);
-            }
-        });*/
     }
 }

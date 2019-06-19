@@ -8,27 +8,22 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.Semaphore;
 
-import br.com.ericbraga.enment.environmnet.firebase.FirebaseMoment;
-import br.com.ericbraga.enment.environmnet.firebase.model.Moment;
-import br.com.ericbraga.enment.environmnet.transfer.DataBaseContract;
-import io.reactivex.Observer;
+import br.com.ericbraga.enment.environmnet.firebase.FirebaseMomentRepository;
+import br.com.ericbraga.enment.environmnet.firebase.model.MomentFirebase;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
-
-import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class FirebaseInsertDataTest {
 
     @Test
     public void validMomentShouldBeInserted() {
-        FirebaseMoment database = new FirebaseMoment();
-        Moment moment = new Moment("12345", "test", 100, 100, 45);
+        FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
+        MomentFirebase momentFirebase = new MomentFirebase("12345", "test", 100, 100, 45);
         final Semaphore semaphore = new Semaphore(0);
 
-        Single<String> observable = database.insert(moment);
+        Single<String> observable = firebaseMomentRepository.insert(momentFirebase);
         Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
             @Override
             public void onSuccess(String s) {
@@ -56,11 +51,11 @@ public class FirebaseInsertDataTest {
 
     @Test
     public void emptyObjectShouldThrowException() {
-        FirebaseMoment database = new FirebaseMoment();
-        Moment moment = new Moment();
+        FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
+        MomentFirebase momentFirebase = new MomentFirebase();
         final Semaphore semaphore = new Semaphore(0);
 
-        Single<String> observable = database.insert(moment);
+        Single<String> observable = firebaseMomentRepository.insert(momentFirebase);
         Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
             @Override
             public void onSuccess(String s) {
@@ -86,7 +81,7 @@ public class FirebaseInsertDataTest {
 
     @Test
     public void nullObjectShouldThrowException() {
-        FirebaseMoment database = new FirebaseMoment();
+        FirebaseMomentRepository database = new FirebaseMomentRepository();
         final Semaphore semaphore = new Semaphore(0);
 
         Single<String> observable = database.insert(null);

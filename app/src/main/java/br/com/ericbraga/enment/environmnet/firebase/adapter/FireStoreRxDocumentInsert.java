@@ -16,7 +16,7 @@ public class FireStoreRxDocumentInsert extends FirestoreRxAdapter<DocumentRefere
         if (!id.isEmpty()) {
             emitter.onSuccess(id);
         } else {
-            error("Id is null");
+            error("Could not insert document: Id is null");
         }
     }
 }
