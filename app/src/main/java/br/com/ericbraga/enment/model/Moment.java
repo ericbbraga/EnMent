@@ -6,12 +6,14 @@ public class Moment {
     private long mLongitude;
     private long mAngle;
     private String mPhotoPath;
+    private String mOwner;
 
-    public Moment(long latitude, long longitude, long angle, String path) {
+    public Moment(long latitude, long longitude, long angle, String photoPath, String owner) {
         mLatitude = latitude;
         mLongitude = longitude;
         mAngle = angle;
-        mPhotoPath = path;
+        mPhotoPath = photoPath;
+        mOwner = owner;
     }
 
     public long getLatitude() {
@@ -26,7 +28,11 @@ public class Moment {
         return mAngle;
     }
 
-    public String getPhotoId() {
+    public String getPhotoPath() {
         return mPhotoPath;
+    }
+
+    public String getOwner() {
+        return mOwner;
     }
 }

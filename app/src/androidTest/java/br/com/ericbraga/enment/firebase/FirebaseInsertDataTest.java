@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.Semaphore;
 
 import br.com.ericbraga.enment.environmnet.firebase.FirebaseMomentRepository;
-import br.com.ericbraga.enment.environmnet.firebase.model.MomentFirebase;
+import br.com.ericbraga.enment.model.Moment;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -20,7 +20,7 @@ public class FirebaseInsertDataTest {
     @Test
     public void validMomentShouldBeInserted() {
         FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
-        MomentFirebase momentFirebase = new MomentFirebase("12345", "test", 100, 100, 45);
+        Moment momentFirebase = new Moment(100, 100, 45, "12345", "test");
         final Semaphore semaphore = new Semaphore(0);
 
         Single<String> observable = firebaseMomentRepository.insert(momentFirebase);
@@ -42,36 +42,6 @@ public class FirebaseInsertDataTest {
         try {
             semaphore.acquire();
 
-        } catch (InterruptedException e) {
-            Assert.fail("Semaphore Failed - Test Failed");
-        } finally {
-            disposable.dispose();
-        }
-    }
-
-    @Test
-    public void emptyObjectShouldThrowException() {
-        FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
-        MomentFirebase momentFirebase = new MomentFirebase();
-        final Semaphore semaphore = new Semaphore(0);
-
-        Single<String> observable = firebaseMomentRepository.insert(momentFirebase);
-        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
-            @Override
-            public void onSuccess(String s) {
-                semaphore.release();
-                Assert.fail("Empty Object should not be inserted");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                semaphore.release();
-            }
-
-        });
-
-        try {
-            semaphore.acquire();
         } catch (InterruptedException e) {
             Assert.fail("Semaphore Failed - Test Failed");
         } finally {

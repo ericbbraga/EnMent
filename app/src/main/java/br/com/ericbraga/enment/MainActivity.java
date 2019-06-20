@@ -16,7 +16,6 @@ import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String sFirebaseBucket = "gs://enment-ericbraga.appspot.com";
     private Observable<String> mUploadFile;
     private List<Observer<String>> mObservers;
     private View mButton;
