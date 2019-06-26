@@ -32,9 +32,10 @@ public class FirebaseTestUploadTestFile {
     private TestMockHelper mHelper;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         Context context = InstrumentationRegistry.getTargetContext();
         mHelper = new TestMockHelper(context.getCacheDir());
+        mHelper.createTemporaryFile();
     }
 
     @Test
@@ -51,11 +52,7 @@ public class FirebaseTestUploadTestFile {
             @Override
             public void onSuccess(String path) {
                 semaphore.release();
-
-                Assert.assertEquals(
-                        String.format("/%s/%s", mOwner, fileName),
-                        path
-                );
+                Assert.assertEquals(String.format("/%s/%s", mOwner, fileName), path);
             }
 
             @Override

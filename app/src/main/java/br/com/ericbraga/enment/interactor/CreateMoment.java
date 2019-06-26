@@ -9,7 +9,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 
-public class CreateMoment implements UseCase<Single<String>, Moment> {
+public class CreateMoment {
 
     private final DataRepository<Moment> mDataManager;
     private final UploadContract mImageManager;
@@ -19,7 +19,6 @@ public class CreateMoment implements UseCase<Single<String>, Moment> {
         mImageManager = imageManager;
     }
 
-    @Override
     public Single<String> execute(final Moment moment) {
 
         if (moment == null) {

@@ -30,6 +30,9 @@ public class TestMockHelper {
         final String fileContent = "This is a file from test purpose";
 
         File file = new File(mTemporaryDirectory, mFileName);
+        if (!file.exists()) {
+            file.createNewFile();
+        }
         FileOutputStream fileOutputStream = null;
 
         try {
