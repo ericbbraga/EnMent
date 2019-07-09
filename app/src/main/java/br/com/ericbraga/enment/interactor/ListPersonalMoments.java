@@ -1,12 +1,11 @@
 package br.com.ericbraga.enment.interactor;
 
-import com.google.errorprone.annotations.Var;
-
 import java.io.File;
 import java.util.List;
 
 import br.com.ericbraga.enment.interactor.contracts.DataRepository;
 import br.com.ericbraga.enment.interactor.contracts.DownloadContract;
+import br.com.ericbraga.enment.interactor.contracts.QueryFilter;
 import br.com.ericbraga.enment.model.Moment;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
@@ -21,13 +20,15 @@ public class ListPersonalMoments {
         mImageDownloader = imageDownloader;
     }
 
-    public Single<List<Moment>> execute(final File outputDir) {
+    public Single<List<Moment>> execute(final File outputDir, String owner) {
 
-        if (outputDir == null) {
+        if (outputDir == null || !outputDir.exists()) {
             return Single.error(new Exception("Output directory is invalid"));
         }
 
-        return mDataManager.list().map(new Function<List<Moment>, List<Moment>>() {
+        QueryFilter filter = new QueryFilter.QueryBuilder().setOwner(owner).build();
+
+        return mDataManager.list(filter).map(new Function<List<Moment>, List<Moment>>() {
             @Override
             public List<Moment> apply(List<Moment> moments) {
 

@@ -4,8 +4,9 @@ import com.google.firebase.storage.FileDownloadTask;
 
 import io.reactivex.SingleEmitter;
 
-public class FirestoreRxDownloadAdapter extends FirestoreRxAdapter<FileDownloadTask.TaskSnapshot, Boolean> {
-    public FirestoreRxDownloadAdapter(SingleEmitter<Boolean> emitter) {
+public class FirestoreRxDocumentDownloadAdapter
+        extends FirestoreRxAdapter<FileDownloadTask.TaskSnapshot, Boolean> {
+    public FirestoreRxDocumentDownloadAdapter(SingleEmitter<Boolean> emitter) {
         super(emitter);
     }
 

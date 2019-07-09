@@ -8,11 +8,11 @@ import java.util.List;
 
 import io.reactivex.SingleEmitter;
 
-public class FirestoreRxDocumentListAdapter<M> extends FirestoreRxAdapter<QuerySnapshot, List<M>> {
+public class FirestoreRxMomentListAdapter<M> extends FirestoreRxAdapter<QuerySnapshot, List<M>> {
 
     private final Class<M> mClass;
 
-    public FirestoreRxDocumentListAdapter(SingleEmitter<List<M>> emitter, Class<M> pClass) {
+    public FirestoreRxMomentListAdapter(SingleEmitter<List<M>> emitter, Class<M> pClass) {
         super(emitter);
         mClass = pClass;
     }

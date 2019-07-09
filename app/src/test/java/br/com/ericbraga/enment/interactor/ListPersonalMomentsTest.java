@@ -40,13 +40,12 @@ public class ListPersonalMomentsTest {
         final Semaphore semaphore = new Semaphore(0);
 
         ListPersonalMoments listMoments = new ListPersonalMoments(dataManager, imageDownloader);
-        Single<List<Moment>> observable = listMoments.execute(null);
+        Single<List<Moment>> observable = listMoments.execute(null, null);
         Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<List<Moment>>() {
             @Override
             public void onSuccess(List<Moment> moments) {
                 semaphore.release();
                 Assert.fail("null directory should throw an exception");
-                Assert.assertNotNull(moments);
             }
 
             @Override
@@ -67,12 +66,12 @@ public class ListPersonalMomentsTest {
     @Test
     public void usingInvalidDirectoryShouldThrowException() {
         final DataRepository<Moment> dataManager = Mockito.mock(DataRepository.class);
-        final List<Moment> mockreturn =  Mockito.mock(List.class);
+        final List<Moment> mockReturn =  new ArrayList<>();
 
         Mockito.when(
                 dataManager.list()
         ).thenReturn(
-                Single.just(mockreturn)
+                Single.just(mockReturn)
         );
 
         final DownloadContract imageDownloader = Mockito.mock(DownloadContract.class);
@@ -91,13 +90,12 @@ public class ListPersonalMomentsTest {
         final Semaphore semaphore = new Semaphore(0);
 
         ListPersonalMoments listMoments = new ListPersonalMoments(dataManager, imageDownloader);
-        Single<List<Moment>> observable = listMoments.execute(directory);
+        Single<List<Moment>> observable = listMoments.execute(directory, "owner");
         Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<List<Moment>>() {
             @Override
             public void onSuccess(List<Moment> moments) {
                 semaphore.release();
                 Assert.fail("invalid directory should throw an exception");
-                Assert.assertNotNull(moments);
             }
 
             @Override
@@ -114,5 +112,4 @@ public class ListPersonalMomentsTest {
 
         disposable.dispose();
     }
-
 }

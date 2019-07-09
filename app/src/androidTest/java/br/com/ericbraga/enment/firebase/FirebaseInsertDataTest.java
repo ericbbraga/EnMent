@@ -11,7 +11,9 @@ import java.util.concurrent.Semaphore;
 import br.com.ericbraga.enment.environmnet.firebase.FirebaseMomentRepository;
 import br.com.ericbraga.enment.model.Moment;
 import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableSingleObserver;
 
 @RunWith(AndroidJUnit4.class)
@@ -19,16 +21,23 @@ public class FirebaseInsertDataTest {
 
     @Test
     public void validMomentShouldBeInserted() {
-        FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
-        Moment momentFirebase = new Moment(100, 100, 45, "12345", "test");
+        final FirebaseMomentRepository firebaseMomentRepository = new FirebaseMomentRepository();
+        final Moment momentFirebase = new Moment(100, 100, 45, "12345", "test");
         final Semaphore semaphore = new Semaphore(0);
 
-        Single<String> observable = firebaseMomentRepository.insert(momentFirebase);
-        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<String>(){
+        Single<Boolean> observable = firebaseMomentRepository.insert(momentFirebase).flatMap(
+                new Function<String, SingleSource<? extends Boolean>>() {
             @Override
-            public void onSuccess(String s) {
+            public SingleSource<? extends Boolean> apply(String s) {
+                return firebaseMomentRepository.delete(momentFirebase);
+            }
+        });
+        Disposable disposable = observable.subscribeWith(new DisposableSingleObserver<Boolean>(){
+
+            @Override
+            public void onSuccess(Boolean result) {
+                Assert.assertTrue(result);
                 semaphore.release();
-                Assert.assertTrue(!s.isEmpty());
             }
 
             @Override

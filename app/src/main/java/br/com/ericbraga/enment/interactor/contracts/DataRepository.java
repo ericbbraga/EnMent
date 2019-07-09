@@ -8,9 +8,7 @@ public interface DataRepository<T> {
 
     Single<String> insert(T t);
     Single<List<T>> list();
-    Single<List<T>> list(DataRepository.ListFilter filters);
+    Single<List<T>> list(QueryFilter filters);
+    Single<Boolean> delete(T t);
 
-    class ListFilter {
-
-    }
 }

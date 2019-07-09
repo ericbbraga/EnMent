@@ -4,8 +4,8 @@ import com.google.firebase.storage.UploadTask;
 
 import io.reactivex.SingleEmitter;
 
-public class FirestoreRxUploadAdapter extends FirestoreRxAdapter<UploadTask.TaskSnapshot, String> {
-    public FirestoreRxUploadAdapter(SingleEmitter<String> emitter) {
+public class FirestoreRxDocumentUploadAdapter extends FirestoreRxAdapter<UploadTask.TaskSnapshot, String> {
+    public FirestoreRxDocumentUploadAdapter(SingleEmitter<String> emitter) {
         super(emitter);
     }
 

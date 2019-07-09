@@ -2,6 +2,7 @@ package br.com.ericbraga.enment.environmnet.firebase;
 
 import android.net.Uri;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -10,8 +11,9 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.io.IOException;
 
-import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxDownloadAdapter;
-import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxUploadAdapter;
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FireStoreRxDocumentDeleteAdapter;
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxDocumentDownloadAdapter;
+import br.com.ericbraga.enment.environmnet.firebase.adapter.FirestoreRxDocumentUploadAdapter;
 import br.com.ericbraga.enment.interactor.contracts.DownloadContract;
 import br.com.ericbraga.enment.interactor.contracts.UploadContract;
 import io.reactivex.Single;
@@ -40,7 +42,7 @@ public class FirebaseTransferFiles implements UploadContract, DownloadContract {
                 final StorageReference storageFromFile = storageReference.child(file.getName());
                 final Uri uriToUpload = Uri.fromFile(file);
 
-                FirestoreRxUploadAdapter adapter = new FirestoreRxUploadAdapter(emitter);
+                FirestoreRxDocumentUploadAdapter adapter = new FirestoreRxDocumentUploadAdapter(emitter);
 
                 final UploadTask task = storageFromFile.putFile(uriToUpload);
                 task.addOnSuccessListener(adapter).addOnFailureListener(adapter);
@@ -68,7 +70,7 @@ public class FirebaseTransferFiles implements UploadContract, DownloadContract {
                 StorageReference storageReference = mStorageBase.getReference(userOwner);
                 StorageReference documentReference = storageReference.child(fileName);
 
-                FirestoreRxDownloadAdapter adapter = new FirestoreRxDownloadAdapter(emitter);
+                FirestoreRxDocumentDownloadAdapter adapter = new FirestoreRxDocumentDownloadAdapter(emitter);
 
 
                 File ownerDirectory = new File(outputDirectory, userOwner);
@@ -88,4 +90,22 @@ public class FirebaseTransferFiles implements UploadContract, DownloadContract {
             }
         });
     }
+
+    @Override
+    public Single<Void> delete(final String fileName, final String owner) {
+        return Single.create(new SingleOnSubscribe<Void>() {
+            @Override
+            public void subscribe(SingleEmitter<Void> emitter) throws Exception {
+                StorageReference storageReference = mStorageBase.getReference(owner);
+                StorageReference documentReference = storageReference.child(fileName);
+
+                Task<Void> task = documentReference.delete();
+                FireStoreRxDocumentDeleteAdapter adapter = new FireStoreRxDocumentDeleteAdapter(emitter);
+                task.addOnSuccessListener(adapter).addOnFailureListener(adapter);
+            }
+        });
+    }
+
+
+
 }

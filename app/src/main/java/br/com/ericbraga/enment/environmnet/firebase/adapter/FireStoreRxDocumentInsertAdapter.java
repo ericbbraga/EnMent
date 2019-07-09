@@ -4,9 +4,9 @@ import com.google.firebase.firestore.DocumentReference;
 
 import io.reactivex.SingleEmitter;
 
-public class FireStoreRxDocumentInsert extends FirestoreRxAdapter<DocumentReference, String> {
+public class FireStoreRxDocumentInsertAdapter extends FirestoreRxAdapter<DocumentReference, String> {
 
-    public FireStoreRxDocumentInsert(SingleEmitter<String> emitter) {
+    public FireStoreRxDocumentInsertAdapter(SingleEmitter<String> emitter) {
         super(emitter);
     }
 

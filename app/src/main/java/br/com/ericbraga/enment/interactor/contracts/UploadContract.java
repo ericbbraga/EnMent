@@ -8,4 +8,5 @@ import io.reactivex.Single;
 
 public interface UploadContract {
     Single<String> upload(File file, String owner);
+    Single<Void> delete(String fileName, String owner);
 }

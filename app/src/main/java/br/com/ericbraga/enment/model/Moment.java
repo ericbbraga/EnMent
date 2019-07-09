@@ -8,6 +8,9 @@ public class Moment {
     private String mPhotoPath;
     private String mOwner;
 
+    public Moment() {
+    }
+
     public Moment(long latitude, long longitude, long angle, String photoPath, String owner) {
         mLatitude = latitude;
         mLongitude = longitude;
