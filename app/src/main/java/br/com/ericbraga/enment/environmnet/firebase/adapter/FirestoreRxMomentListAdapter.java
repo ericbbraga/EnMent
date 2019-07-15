@@ -1,5 +1,6 @@
 package br.com.ericbraga.enment.environmnet.firebase.adapter;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -22,7 +23,7 @@ public class FirestoreRxMomentListAdapter<M> extends FirestoreRxAdapter<QuerySna
         List<M> elements = new ArrayList<>();
 
         if (result != null) {
-            for (QueryDocumentSnapshot document : result) {
+            for (DocumentSnapshot document : result.getDocuments()) {
                 elements.add( document.toObject( mClass ) );
             }
         }

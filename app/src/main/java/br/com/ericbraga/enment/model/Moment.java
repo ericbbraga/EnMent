@@ -38,4 +38,24 @@ public class Moment {
     public String getOwner() {
         return mOwner;
     }
+
+    public void setLatitude(long latitude) {
+        mLatitude = latitude;
+    }
+
+    public void setLongitude(long longitude) {
+        mLongitude = longitude;
+    }
+
+    public void setAngle(long angle) {
+        mAngle = angle;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        mPhotoPath = photoPath;
+    }
+
+    public void setOwner(String owner) {
+        mOwner = owner;
+    }
 }

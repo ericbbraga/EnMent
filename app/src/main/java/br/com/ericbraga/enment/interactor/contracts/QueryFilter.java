@@ -11,7 +11,9 @@ public class QueryFilter {
     private static String LONGITUDE_FILTER = "longitude";
 
     private Long mLongitude;
+    private Long mLongitudeRange;
     private Long mLatitude;
+    private Long mLatitudeRange;
     private String mOwner;
 
     private QueryFilter() {
@@ -50,13 +52,15 @@ public class QueryFilter {
             return this;
         }
 
-        public QueryBuilder setLatitude(long latitude) {
+        public QueryBuilder setLatitude(long latitude, long range) {
             mQueryFilter.mLatitude = latitude;
+            mQueryFilter.mLatitudeRange = range;
             return this;
         }
 
-        public QueryBuilder setLongitude(long longitude) {
+        public QueryBuilder setLongitude(long longitude, long range) {
             mQueryFilter.mLongitude = longitude;
+            mQueryFilter.mLongitudeRange = range;
             return this;
         }
 

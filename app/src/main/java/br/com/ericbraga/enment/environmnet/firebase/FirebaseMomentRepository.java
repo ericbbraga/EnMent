@@ -1,10 +1,9 @@
 package br.com.ericbraga.enment.environmnet.firebase;
 
-import android.net.UrlQuerySanitizer;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
@@ -23,6 +22,7 @@ import io.reactivex.SingleOnSubscribe;
 
 public class FirebaseMomentRepository implements DataRepository<Moment> {
     private static final String MOMENT_TABLE = "moments";
+    public static final String EXTRA_TIMESTAMP_FIELD = "timestamp";
 
     private FirebaseFirestore mDatabase;
 
@@ -80,6 +80,20 @@ public class FirebaseMomentRepository implements DataRepository<Moment> {
     }
 
     @Override
+    public Single<List<Moment>> list(final QueryFilter filters, final int limit) {
+        return Single.create(new SingleOnSubscribe<List<Moment>>() {
+            @Override
+            public void subscribe(SingleEmitter<List<Moment>> emitter) {
+                FirestoreRxMomentListAdapter<Moment> adapter =
+                        new FirestoreRxMomentListAdapter<>(emitter, Moment.class);
+
+                Task<QuerySnapshot> querySnapshotTask = query(filters, limit);
+                querySnapshotTask.addOnCompleteListener(adapter).addOnFailureListener(adapter);
+            }
+        });
+    }
+
+    @Override
     public Single<Boolean> delete(final Moment moment) {
         return Single.create(new SingleOnSubscribe<Boolean>() {
             @Override
@@ -87,8 +101,8 @@ public class FirebaseMomentRepository implements DataRepository<Moment> {
 
                 QueryFilter filters = new QueryFilter.QueryBuilder()
                         .setOwner(moment.getOwner())
-                        .setLatitude(moment.getLatitude())
-                        .setLongitude(moment.getLongitude())
+                        .setLatitude(moment.getLatitude(), 0)
+                        .setLongitude(moment.getLongitude(), 0)
                         .build();
 
                 Task<QuerySnapshot> deleteSnapTask = query(filters);
@@ -101,6 +115,16 @@ public class FirebaseMomentRepository implements DataRepository<Moment> {
     }
 
     private Task<QuerySnapshot> query(QueryFilter filters) {
+        Query query = getCollectionReference(filters);
+        return query.get();
+    }
+
+    private Task<QuerySnapshot> query(QueryFilter filters, int limit) {
+        Query query = getCollectionReference(filters);
+        return query.limit(limit).get();
+    }
+
+    private Query getCollectionReference(QueryFilter filters) {
         CollectionReference collection = mDatabase.collection(MOMENT_TABLE);
 
         Set<Map.Entry<String, Object>> values = filters.getValues();
@@ -109,7 +133,7 @@ public class FirebaseMomentRepository implements DataRepository<Moment> {
             collection.whereEqualTo(entry.getKey(), entry.getValue());
         }
 
-        return collection.get();
+        return collection.orderBy(EXTRA_TIMESTAMP_FIELD, Query.Direction.DESCENDING);
     }
 
 }
